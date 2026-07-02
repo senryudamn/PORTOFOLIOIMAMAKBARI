@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
 import { navLinks } from '../data';
 
 export default function Navbar() {
@@ -37,20 +36,20 @@ export default function Navbar() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, delay: 3 }}
-      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ${
+      className={`sticky top-0 z-50 transition-all duration-500 ${
         isScrolled ? 'shadow-paper-lg' : ''
       }`}
       style={{
         background: isScrolled
-          ? 'linear-gradient(135deg, rgba(232,220,184,0.95), rgba(212,196,160,0.95))'
-          : 'rgba(232,220,184,0.6)',
-        backdropFilter: isScrolled ? 'blur(10px)' : 'none',
+          ? 'linear-gradient(135deg, rgba(232,220,184,0.98), rgba(212,196,160,0.98))'
+          : 'rgba(232,220,184,0.85)',
+        backdropFilter: 'blur(8px)',
       }}
     >
       {/* Decorative top border */}
       <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-crimson via-[#1a3a5c] to-[#2d1b4e]" />
 
-      <div className="container mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6 lg:pr-24">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6">
         {/* Logo - Journal icon */}
         <a href="#home" className="group flex items-center gap-2">
           <div className="relative h-10 w-10 rounded-sm border-2 border-parchment-500 bg-parchment-200 p-1 shadow-paper transition-transform group-hover:scale-105">
@@ -62,11 +61,6 @@ export default function Navbar() {
               <line x1="8" y1="11" x2="14" y2="11" stroke="#5c4a32" strokeWidth="1" />
               <line x1="8" y1="14" x2="15" y2="14" stroke="#5c4a32" strokeWidth="1" />
             </svg>
-
-            {/* Page corner fold */}
-            <div className="absolute -right-0.5 -top-0.5 h-3 w-3 border-b border-l border-parchment-400 bg-white/50" style={{
-              transform: 'rotate(45deg)',
-            }} />
           </div>
           <span className="font-cryptic text-lg font-bold text-parchment-600 hidden md:block">
             Myst Journal
@@ -115,7 +109,7 @@ export default function Navbar() {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-            className="hidden h-8 w-8 opacity-50 lg:block"
+            className="hidden h-8 w-8 opacity-40 lg:block"
           >
             <svg viewBox="0 0 40 40">
               <circle cx="20" cy="20" r="18" fill="none" stroke="#5c4a32" strokeWidth="1" />
@@ -133,7 +127,15 @@ export default function Navbar() {
             className="flex h-10 w-10 items-center justify-center rounded-sm border-2 border-parchment-500 text-parchment-600 transition-colors hover:bg-parchment-200 md:hidden"
             aria-label="Toggle menu"
           >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileOpen ? (
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
           </button>
         </div>
       </div>
@@ -148,7 +150,7 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
             className="overflow-hidden border-b border-parchment-400/30 bg-parchment-200/95 backdrop-blur-lg md:hidden"
           >
-            <div className="container mx-auto max-w-6xl px-4 py-4">
+            <div className="px-4 py-4">
               {navLinks.map((link) => {
                 const isActive = activeSection === link.href.replace('#', '');
                 return (

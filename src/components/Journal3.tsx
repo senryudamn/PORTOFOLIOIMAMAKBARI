@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { gallery, awards } from '../data';
 import WatchingEye from './WatchingEye';
 import CryptogramText from './CryptogramText';
-import HideBehindAnomaly from './HideBehindAnomaly';
 
 // Six-fingered hand with number 3
 function SixFingerHand3({ className = '' }: { className?: string }) {
@@ -256,63 +255,56 @@ function AwardCard({ award, index }: AwardItemProps) {
 
 export default function Journal3() {
   return (
-    <section id="gallery" className="relative journal-page trust-no-one">
-      {/* Page divider */}
-      <div className="journal-divider" />
+    <section id="gallery" className="relative px-4 py-16 md:px-8 lg:pr-20 trust-no-one">
+      {/* Journal header */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="mb-8 flex items-center gap-6"
+      >
+        {/* Six-fingered hand */}
+        <SixFingerHand3 className="h-24 w-28 md:h-32 md:w-36" />
 
-      <div className="container relative mx-auto max-w-6xl px-4 py-16 md:px-8 lg:pr-24">
-        {/* Journal header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-8 flex items-center gap-6"
-        >
-          {/* Six-fingered hand */}
-          <SixFingerHand3 className="h-24 w-28 md:h-32 md:w-36" />
+        {/* Journal title */}
+        <div>
+          <h2 className="font-cryptic text-3xl font-bold md:text-4xl" style={{ color: '#2d1b4e' }}>
+            JOURNAL #3
+          </h2>
+          <p className="font-typewriter text-sm uppercase tracking-widest text-parchment-500">
+            The Most Secretive Chapter
+          </p>
+        </div>
+      </motion.div>
 
-          {/* Journal title */}
-          <div>
-            <h2 className="font-cryptic text-3xl font-bold md:text-4xl" style={{ color: '#2d1b4e' }}>
-              JOURNAL #3
-            </h2>
-            <p className="font-typewriter text-sm uppercase tracking-widest text-parchment-500">
-              The Most Secretive Chapter
-            </p>
-          </div>
-        </motion.div>
+      {/* Decorative line */}
+      <motion.div
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="mb-12 h-1 bg-gradient-to-r from-[#2d1b4e] via-[#FF00FF] to-transparent"
+        style={{ transformOrigin: 'left' }}
+      />
 
-        {/* Decorative line */}
-        <motion.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-12 h-1 bg-gradient-to-r from-[#2d1b4e] via-[#FF00FF] to-transparent"
-          style={{ transformOrigin: 'left' }}
+      {/* Warning banner */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        className="relative mb-12 rounded border-2 border-dashed border-[#FF00FF]/30 bg-parchment-200/70 p-6"
+      >
+        {/* Watching Eye Easter Egg in background */}
+        <WatchingEye />
+
+        {/* Torn edge */}
+        <div
+          className="absolute -right-2 -top-2 h-16 w-12 rotate-6 border-b border-l border-[#FF00FF]/20"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,0,255,0.05), transparent)',
+          }}
         />
-
-        {/* Warning banner */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="relative mb-12 overflow-hidden rounded border-2 border-dashed border-[#FF00FF]/30 bg-parchment-200/70 p-6"
-        >
-          {/* Watching Eye Easter Egg in background */}
-          <WatchingEye />
-
-          {/* Hide-Behind Anomaly */}
-          <HideBehindAnomaly side="left" topPosition="40%" />
-
-          {/* Torn edge */}
-          <div
-            className="absolute -right-2 -top-2 h-16 w-12 rotate-6 border-b border-l border-[#FF00FF]/20"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255,0,255,0.05), transparent)',
-            }}
-          />
 
           <p className="font-typewriter text-lg text-[#2d1b4e] lg:text-xl">
             "<CryptogramText text="TRUST NO ONE!" className="text-[#FF00FF]" />
@@ -375,10 +367,9 @@ export default function Journal3() {
             TRUST NO ONE
           </p>
         </motion.div>
-      </div>
 
       {/* Contact section */}
-      <div id="contact" className="relative mt-20 bg-gradient-to-b from-transparent via-parchment-200/50 to-parchment-300/30 py-16">
+      <div id="contact" className="relative mt-20 bg-parchment-200/50 py-16">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -426,15 +417,6 @@ export default function Journal3() {
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Final torn edge */}
-      <div
-        className="absolute -bottom-8 left-0 right-0 h-8 bg-black/5"
-        style={{
-          clipPath:
-            'polygon(0 0, 100% 0, 100% 100%, 95% 60%, 90% 100%, 85% 50%, 80% 100%, 75% 70%, 70% 100%, 65% 40%, 60% 100%, 55% 60%, 50% 100%, 45% 70%, 40% 100%, 35% 50%, 30% 100%, 25% 80%, 20% 100%, 15% 60%, 10% 100%, 5% 50%, 0 100%)',
-        }}
-      />
     </section>
   );
 }

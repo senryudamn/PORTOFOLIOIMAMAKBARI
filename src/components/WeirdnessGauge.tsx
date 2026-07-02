@@ -29,188 +29,165 @@ export default function WeirdnessGauge() {
 
   const danger = getDangerLevel();
 
-  // Generate tick marks for the gauge
-  const ticks = [0, 20, 40, 60, 80, 100];
-
   return (
     <motion.div
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 3.5, duration: 0.8 }}
-      className="fixed right-4 top-1/2 z-50 hidden -translate-y-1/2 transform lg:block xl:right-6"
+      className="fixed right-4 top-1/2 z-50 hidden -translate-y-1/2 transform lg:block xl:right-8"
     >
       <div className="relative flex flex-col items-center">
         {/* Journal section indicator */}
-        <div className="mb-3 rounded-full border border-parchment-500/50 bg-parchment-900/80 px-3 py-1">
-          <span className="font-typewriter text-xs uppercase tracking-wider text-gold">
+        <div className="mb-2 rounded border border-gold/30 bg-black/80 px-3 py-1">
+          <span className="font-typewriter text-[10px] uppercase tracking-wider text-gold">
             Journal {Math.ceil(scrollProgress / 33.33)}
           </span>
         </div>
 
         {/* Steampunk Gauge Container */}
-        <div className="relative h-44 w-24">
-          {/* Outer metallic frame */}
-          <div
-            className="absolute inset-0 rounded-t-full rounded-b-lg"
-            style={{
-              background: 'linear-gradient(145deg, #8B7355 0%, #5c4a32 50%, #3d2e1a 100%)',
-              boxShadow: `
-                inset 0 2px 4px rgba(255,255,255,0.2),
-                inset 0 -2px 4px rgba(0,0,0,0.4),
-                0 4px 12px rgba(0,0,0,0.5),
-                0 0 0 3px #3d2e1a
-              `,
-            }}
-          />
-
-          {/* Inner gauge face */}
-          <div
-            className="absolute inset-2 rounded-t-full rounded-b-md"
-            style={{
-              background: 'linear-gradient(180deg, #1a1608 0%, #0d0a04 100%)',
-              boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.8)',
-            }}
+        <div className="relative flex flex-col items-center">
+          {/* Main gauge SVG - single unified element for proper alignment */}
+          <svg
+            viewBox="0 0 140 100"
+            className="h-36 w-40"
           >
-            {/* Glass reflection semi-circle */}
-            <div
-              className="absolute inset-x-0 top-0 h-1/2 rounded-t-full opacity-20"
-              style={{
-                background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%)',
-              }}
+            {/* Definitions */}
+            <defs>
+              {/* Metallic frame gradient */}
+              <linearGradient id="metalFrame" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#8B7355" />
+                <stop offset="50%" stopColor="#5c4a32" />
+                <stop offset="100%" stopColor="#3d2e1a" />
+              </linearGradient>
+              {/* Inner face gradient */}
+              <radialGradient id="innerFace" cx="50%" cy="100%" r="100%">
+                <stop offset="0%" stopColor="#1a1608" />
+                <stop offset="100%" stopColor="#0d0a04" />
+              </radialGradient>
+              {/* Zone gradient */}
+              <linearGradient id="zoneGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#22c55e" />
+                <stop offset="50%" stopColor="#eab308" />
+                <stop offset="100%" stopColor="#ef4444" />
+              </linearGradient>
+              {/* Needle cap gradient */}
+              <radialGradient id="needleCap" cx="30%" cy="30%">
+                <stop offset="0%" stopColor="#FFD700" />
+                <stop offset="100%" stopColor="#C9A800" />
+              </radialGradient>
+            </defs>
+
+            {/* Outer metallic frame (semi-circle) */}
+            <path
+              d="M 10 90 A 60 60 0 0 1 130 90"
+              fill="url(#metalFrame)"
+              stroke="#3d2e1a"
+              strokeWidth="4"
             />
 
-            {/* Tick marks and labels */}
-            <svg viewBox="0 0 100 70" className="absolute inset-x-2 top-2 h-full w-auto">
-              {/* Arc path for ticks */}
-              {ticks.map((tick) => {
-                const angle = -90 + (tick * 1.8);
-                const rad = (angle * Math.PI) / 180;
-                const x1 = 50 + 35 * Math.cos(rad);
-                const y1 = 65 - 35 * Math.sin(rad);
-                const x2 = 50 + (tick % 20 === 0 ? 28 : 31) * Math.cos(rad);
-                const y2 = 65 - (tick % 20 === 0 ? 28 : 31) * Math.sin(rad);
-                const labelX = 50 + 22 * Math.cos(rad);
-                const labelY = 65 - 22 * Math.sin(rad);
+            {/* Inner gauge face */}
+            <path
+              d="M 18 90 A 52 52 0 0 1 122 90"
+              fill="url(#innerFace)"
+            />
 
-                return (
-                  <g key={tick}>
-                    {/* Tick line */}
-                    <line
-                      x1={x1}
-                      y1={y1}
-                      x2={x2}
-                      y2={y2}
-                      stroke={tick >= 80 ? '#ef4444' : tick >= 60 ? '#eab308' : '#22c55e'}
-                      strokeWidth={tick % 20 === 0 ? 2 : 1}
-                      opacity={0.8}
-                    />
-                    {/* Label */}
-                    {tick % 20 === 0 && (
-                      <text
-                        x={labelX}
-                        y={labelY}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        fill={tick >= 80 ? '#ef4444' : tick >= 60 ? '#eab308' : '#22c55e'}
-                        fontSize="5"
-                        fontFamily="monospace"
-                        opacity={0.9}
-                      >
-                        {tick}
-                      </text>
-                    )}
-                  </g>
-                );
-              })}
+            {/* Glass reflection */}
+            <path
+              d="M 20 90 A 50 50 0 0 1 70 50"
+              fill="url(#innerFace)"
+              opacity="0.15"
+            />
 
-              {/* Colored zones */}
-              <defs>
-                <linearGradient id="zoneGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#22c55e" />
-                  <stop offset="50%" stopColor="#eab308" />
-                  <stop offset="100%" stopColor="#ef4444" />
-                </linearGradient>
-              </defs>
-              <path
-                d="M 15 65 A 35 35 0 0 1 85 65"
-                fill="none"
-                stroke="url(#zoneGradient)"
-                strokeWidth="2"
-                opacity="0.3"
-              />
-            </svg>
+            {/* Colored zone arc */}
+            <path
+              d="M 25 90 A 45 45 0 0 1 115 90"
+              fill="none"
+              stroke="url(#zoneGradient)"
+              strokeWidth="3"
+              opacity="0.4"
+            />
 
-            {/* Needle */}
-            <motion.div
-              className="absolute bottom-6 left-1/2 origin-bottom"
-              style={{
-                width: '4px',
-                height: '50px',
-                marginLeft: '-2px',
-              }}
+            {/* Tick marks */}
+            {[0, 20, 40, 60, 80, 100].map((tick) => {
+              const angle = -180 + (tick * 1.8); // -180 to 0 degrees (left to right along arc)
+              const rad = (angle * Math.PI) / 180;
+              const x1 = 70 + 48 * Math.cos(rad);
+              const y1 = 90 + 48 * Math.sin(rad);
+              const x2 = 70 + (tick % 20 === 0 ? 35 : 41) * Math.cos(rad);
+              const y2 = 90 + (tick % 20 === 0 ? 35 : 41) * Math.sin(rad);
+              const labelX = 70 + 28 * Math.cos(rad);
+              const labelY = 90 + 28 * Math.sin(rad);
+
+              const color = tick >= 80 ? '#ef4444' : tick >= 60 ? '#eab308' : '#22c55e';
+
+              return (
+                <g key={tick}>
+                  <line
+                    x1={x1}
+                    y1={y1}
+                    x2={x2}
+                    y2={y2}
+                    stroke={color}
+                    strokeWidth={tick % 20 === 0 ? 2 : 1}
+                    opacity={0.8}
+                  />
+                  {tick % 20 === 0 && (
+                    <text
+                      x={labelX}
+                      y={labelY}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill={color}
+                      fontSize="7"
+                      fontFamily="monospace"
+                      fontWeight="bold"
+                    >
+                      {tick}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
+
+            {/* Needle group - pivots at center bottom (70, 90) */}
+            <motion.g
               animate={{ rotate: needleRotation }}
               transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+              style={{ transformOrigin: '70px 90px' }}
             >
-              <svg viewBox="0 0 8 50" className="h-full w-full">
-                {/* Needle shape */}
-                <polygon
-                  points="4,0 6,40 2,40"
-                  fill={danger.color}
-                  stroke="rgba(0,0,0,0.3)"
-                  strokeWidth="0.5"
-                />
-                {/* Needle center cap */}
-                <circle
-                  cx="4"
-                  cy="45"
-                  r="4"
-                  fill="url(#needleCap)"
-                  stroke="#3d2e1a"
-                  strokeWidth="1"
-                />
-                <defs>
-                  <radialGradient id="needleCap" cx="30%" cy="30%">
-                    <stop offset="0%" stopColor="#FFD700" />
-                    <stop offset="100%" stopColor="#C9A800" />
-                  </radialGradient>
-                </defs>
-              </svg>
-            </motion.div>
+              {/* Needle shadow */}
+              <polygon
+                points="70,35 73,85 67,85"
+                fill="rgba(0,0,0,0.3)"
+                transform="translate(2, 2)"
+              />
+              {/* Needle */}
+              <polygon
+                points="70,35 73,85 67,85"
+                fill={danger.color}
+                stroke="rgba(255,255,255,0.2)"
+                strokeWidth="0.5"
+              />
+              {/* Center cap */}
+              <circle
+                cx="70"
+                cy="90"
+                r="8"
+                fill="url(#needleCap)"
+                stroke="#3d2e1a"
+                strokeWidth="1"
+              />
+            </motion.g>
 
-            {/* Center screw/cap */}
-            <div
-              className="absolute bottom-5 left-1/2 h-5 w-5 -translate-x-1/2 rounded-full"
-              style={{
-                background: 'radial-gradient(circle at 30% 30%, #FFD700, #8B7355, #3d2e1a)',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.5)',
-              }}
-            />
-          </div>
-
-          {/* Brass screws decoration */}
-          <div
-            className="absolute -left-1 top-8 h-2 w-2 rounded-full"
-            style={{
-              background: 'radial-gradient(circle at 30% 30%, #FFD700, #8B7355)',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.3)',
-            }}
-          />
-          <div
-            className="absolute -right-1 top-8 h-2 w-2 rounded-full"
-            style={{
-              background: 'radial-gradient(circle at 30% 30%, #FFD700, #8B7355)',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.3)',
-            }}
-          />
+            {/* Brass screws */}
+            <circle cx="15" cy="25" r="3" fill="#FFD700" opacity="0.7" />
+            <circle cx="125" cy="25" r="3" fill="#FFD700" opacity="0.7" />
+          </svg>
         </div>
 
         {/* Digital readout */}
         <div
-          className="mt-2 rounded border border-parchment-500/50 px-2 py-1"
-          style={{
-            background: 'linear-gradient(180deg, #1a1608 0%, #0d0a04 100%)',
-            boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
-          }}
+          className="mt-1 rounded border border-parchment-500/30 bg-black/90 px-2 py-0.5"
         >
           <span
             className="font-mono text-sm font-bold tabular-nums"
@@ -249,7 +226,7 @@ export default function WeirdnessGauge() {
               duration: 0.5,
               repeat: Infinity,
             }}
-            className="absolute -left-3 top-6 h-3 w-3 rounded-full"
+            className="absolute -left-4 top-20 h-3 w-3 rounded-full"
             style={{
               background: 'radial-gradient(circle, #ef4444, #7f1d1d)',
               boxShadow: '0 0 8px #ef4444, 0 0 16px #ef4444',

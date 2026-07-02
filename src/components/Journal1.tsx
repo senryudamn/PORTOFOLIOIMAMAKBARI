@@ -40,13 +40,11 @@ function SixFingerHand({ className = '' }: { className?: string }) {
 
 export default function Journal1() {
   return (
-    <section id="home" className="relative min-h-screen journal-page">
-      {/* Torn page edge at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-8 bg-black/5" style={{
-        clipPath: 'polygon(0 0, 100% 0, 100% 100%, 95% 60%, 90% 100%, 85% 50%, 80% 100%, 75% 70%, 70% 100%, 65% 40%, 60% 100%, 55% 60%, 50% 100%, 45% 70%, 40% 100%, 35% 50%, 30% 100%, 25% 80%, 20% 100%, 15% 60%, 10% 100%, 5% 50%, 0 100%)'
-      }} />
+    <section id="home" className="relative min-h-screen px-4 py-16 md:px-8 lg:pr-20">
+      {/* Hide-Behind Anomaly - fixed position, teleports across screen */}
+      <HideBehindAnomaly />
 
-      <div className="container relative mx-auto max-w-6xl px-4 py-16 md:px-8 lg:pr-24">
+      {/* Journal header */}
         {/* Journal header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -213,9 +211,6 @@ export default function Journal1() {
           id="about"
           className="relative mt-20 pt-8"
         >
-          {/* Hide-Behind Anomaly Easter Egg */}
-          <HideBehindAnomaly side="right" topPosition="15%" />
-
           {/* Journal entry header */}
           <div className="mb-6 flex items-center gap-4">
             <div className="h-px flex-1 bg-gradient-to-r from-crimson/50 to-transparent" />
@@ -310,7 +305,6 @@ export default function Journal1() {
             </div>
           </div>
         </motion.div>
-      </div>
     </section>
   );
 }

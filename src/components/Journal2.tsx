@@ -227,12 +227,8 @@ function ProjectCard({ project, index }: ProjectCardProps) {
 
 export default function Journal2() {
   return (
-    <section id="projects" className="relative journal-page">
-      {/* Page divider */}
-      <div className="journal-divider" />
-
-      <div className="container relative mx-auto max-w-6xl px-4 py-16 md:px-8 lg:pr-24">
-        {/* Journal header */}
+    <section id="projects" className="relative px-4 py-16 md:px-8 lg:pr-20">
+      {/* Journal header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -311,16 +307,6 @@ export default function Journal2() {
             Hover over blueprints to reveal hidden specifications...
           </p>
         </motion.div>
-      </div>
-
-      {/* Torn page edge at bottom */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-8 bg-black/5"
-        style={{
-          clipPath:
-            'polygon(0 0, 100% 0, 100% 100%, 95% 60%, 90% 100%, 85% 50%, 80% 100%, 75% 70%, 70% 100%, 65% 40%, 60% 100%, 55% 60%, 50% 100%, 45% 70%, 40% 100%, 35% 50%, 30% 100%, 25% 80%, 20% 100%, 15% 60%, 10% 100%, 5% 50%, 0 100%)',
-        }}
-      />
     </section>
   );
 }

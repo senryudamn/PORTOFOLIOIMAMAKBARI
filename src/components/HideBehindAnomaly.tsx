@@ -1,199 +1,267 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface HideBehindAnomalyProps {
-  side?: 'left' | 'right';
-  topPosition?: string;
+  initialSide?: 'left' | 'right';
+  initialTop?: string;
 }
 
-export default function HideBehindAnomaly({
-  side = 'right',
-  topPosition = '30%',
-}: HideBehindAnomalyProps) {
-  const [isHiding, setIsHiding] = useState(false);
-  const [isPeeking, setIsPeeking] = useState(true);
-  const containerRef = useRef<HTMLDivElement>(null);
+interface HideBehindPosition {
+  top: string;
+  left?: string;
+  right?: string;
+}
 
-  const x = useMotionValue(side === 'right' ? '100%' : '-100%');
-  const springX = useSpring(x, { stiffness: 300, damping: 30 });
+// Predefined teleportation coordinates
+const teleportPositions: HideBehindPosition[] = [
+  { top: '15%', left: '5%' },
+  { top: '25%', right: '8%' },
+  { top: '40%', left: '3%' },
+  { top: '55%', right: '5%' },
+  { top: '70%', left: '7%' },
+  { top: '20%', right: '12%' },
+  { top: '85%', left: '4%' },
+  { top: '35%', right: '3%' },
+  { top: '50%', left: '8%' },
+  { top: '65%', right: '6%' },
+  { top: '10%', right: '4%' },
+  { top: '78%', left: '10%' },
+];
+
+export default function HideBehindAnomaly({
+  initialSide = 'right',
+  initialTop = '30%',
+}: HideBehindAnomalyProps) {
+  const [position, setPosition] = useState<HideBehindPosition>({
+    top: initialTop,
+    [initialSide]: '5%',
+  });
+  const [isVisible, setIsVisible] = useState(true);
+  const [isHiding, setIsHiding] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const lastTeleportTime = useRef(0);
+
+  const teleport = useCallback(() => {
+    // Debounce teleportation (minimum 500ms between teleports)
+    const now = Date.now();
+    if (now - lastTeleportTime.current < 500) return;
+    lastTeleportTime.current = now;
+
+    // Quick fade out
+    setIsHiding(true);
+    setIsVisible(false);
+
+    // Select random new position
+    const randomIndex = Math.floor(Math.random() * teleportPositions.length);
+    const newPosition = teleportPositions[randomIndex];
+
+    // Teleport and fade back in
+    setTimeout(() => {
+      setPosition(newPosition);
+      setIsHiding(false);
+      setTimeout(() => setIsVisible(true), 100);
+    }, 200);
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current) return;
 
       const rect = containerRef.current.getBoundingClientRect();
-      const mouseX = e.clientX;
-      const mouseY = e.clientY;
-
-      // Calculate distance from the creature
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
       const distance = Math.sqrt(
-        Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2)
+        Math.pow(e.clientX - centerX, 2) + Math.pow(e.clientY - centerY, 2)
       );
 
-      // If mouse is close, hide; otherwise, slowly peek
-      if (distance < 200) {
-        setIsHiding(true);
-        setIsPeeking(false);
-        if (side === 'right') {
-          x.set('85%');
-        } else {
-          x.set('-85%');
-        }
-      } else if (distance > 300) {
-        // Slowly start peeking again
-        setIsHiding(false);
-
-        if (distance > 400) {
-          setIsPeeking(true);
-          if (side === 'right') {
-            x.set('95%');
-          } else {
-            x.set('-95%');
-          }
-        }
+      // If mouse gets close - teleport away!
+      if (distance < 150 && isVisible && !isHiding) {
+        teleport();
       }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [side, x]);
+  }, [isVisible, isHiding, teleport]);
+
+  // Random peeking behavior when far from mouse
+  useEffect(() => {
+    const randomPeek = () => {
+      if (!isVisible && !isHiding) {
+        setIsVisible(true);
+      }
+    };
+
+    const interval = setInterval(randomPeek, 3000);
+    return () => clearInterval(interval);
+  }, [isVisible, isHiding]);
 
   return (
-    <div
+    <motion.div
       ref={containerRef}
-      className={`absolute ${side === 'right' ? 'right-0' : 'left-0'} pointer-events-none`}
+      className="pointer-events-none fixed z-40"
       style={{
-        top: topPosition,
-        zIndex: isHiding ? 0 : 10,
+        top: position.top,
+        left: position.left,
+        right: position.right,
       }}
     >
-      <motion.div
-        style={{
-          x: springX,
-        }}
-        initial={{ opacity: 0 }}
-        animate={{
-          opacity: isPeeking || isHiding ? 0.6 : 0.3,
-        }}
-        transition={{ duration: 0.3 }}
-        className="relative"
-      >
-        {/* The Hide-Behind creature - shadowy figure */}
-        <svg
-          viewBox="0 0 40 80"
-          className="h-20 w-10"
-          style={{
-            filter: `drop-shadow(0 0 ${isHiding ? 0 : isPeeking ? '8px' : '4px'} rgba(255,0,255,0.5))`,
-          }}
-        >
-          {/* Body - shadowy mass */}
-          <ellipse
-            cx="20"
-            cy="50"
-            rx="15"
-            ry="25"
-            fill="rgba(20,10,30,0.9)"
-            stroke={isHiding ? 'none' : '#FF00FF'}
-            strokeWidth="0.5"
-            opacity={isHiding ? 0.2 : 0.8}
-          />
-
-          {/* Glowing eyes */}
-          {(!isHiding || isPeeking) && (
-            <>
-              {/* Left eye */}
-              <motion.ellipse
-                cx="14"
-                cy="35"
-                rx="3"
-                ry="2.5"
-                fill="#00FFFF"
-                animate={{
-                  opacity: [0.6, 1, 0.6],
-                  cy: [35, 33, 35],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: 'reverse',
-                }}
-                style={{
-                  filter: 'drop-shadow(0 0 4px #00FFFF)',
-                }}
-              />
-              {/* Right eye */}
-              <motion.ellipse
-                cx="26"
-                cy="35"
-                rx="3"
-                ry="2.5"
-                fill="#00FFFF"
-                animate={{
-                  opacity: [0.6, 1, 0.6],
-                  cy: [35, 33, 35],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: 'reverse',
-                  delay: 0.5,
-                }}
-                style={{
-                  filter: 'drop-shadow(0 0 4px #00FFFF)',
-                }}
-              />
-              {/* Eye pupils */}
-              <circle cx="14" cy="35" r="1" fill="#FF00FF" />
-              <circle cx="26" cy="35" r="1" fill="#FF00FF" />
-            </>
-          )}
-
-          {/* Tentacle-like appendages */}
-          {!isHiding && (
-            <>
-              <motion.path
-                d="M8 60 Q5 70 10 75"
-                fill="none"
-                stroke="rgba(20,10,30,0.9)"
-                strokeWidth="4"
-                strokeLinecap="round"
-                animate={{
-                  d: ['M8 60 Q5 70 10 75', 'M8 60 Q3 72 12 78', 'M8 60 Q5 70 10 75'],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                }}
-              />
-              <motion.path
-                d="M32 60 Q35 70 30 75"
-                fill="none"
-                stroke="rgba(20,10,30,0.9)"
-                strokeWidth="4"
-                strokeLinecap="round"
-                animate={{
-                  d: ['M32 60 Q35 70 30 75', 'M32 60 Q37 72 28 78', 'M32 60 Q35 70 30 75'],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  delay: 1.5,
-                }}
-              />
-            </>
-          )}
-        </svg>
-
-        {/* "Hide Behind" label (rarely visible) */}
+      <AnimatePresence mode="wait">
         <motion.div
-          animate={{ opacity: isPeeking && !isHiding ? 0.5 : 0 }}
-          className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap font-typewriter text-[8px] uppercase tracking-wider text-magenta"
+          key={`${position.top}-${position.left || position.right}`}
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{
+            opacity: isVisible && !isHiding ? 0.7 : 0,
+            scale: isVisible && !isHiding ? 1 : 0.5,
+          }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          transition={{
+            opacity: { duration: isHiding ? 0.1 : 0.3 },
+            scale: { duration: 0.2 },
+          }}
+          className="relative"
         >
-          (THE HIDE-BEHIND)
+          {/* The Hide-Behind creature - shadowy figure */}
+          <svg
+            viewBox="0 0 50 90"
+            className="h-24 w-14"
+            style={{
+              filter: `drop-shadow(0 0 ${isHiding ? 0 : '12px'} rgba(255,0,255,0.6))`,
+            }}
+          >
+            {/* Body - shadowy mass */}
+            <motion.ellipse
+              cx="25"
+              cy="55"
+              rx="18"
+              ry="30"
+              fill="rgba(20,10,30,0.95)"
+              stroke="#FF00FF"
+              strokeWidth="0.5"
+              animate={{
+                ry: [30, 32, 30],
+                opacity: [0.9, 1, 0.9],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+              }}
+            />
+
+            {/* Glowing eyes */}
+            {isVisible && !isHiding && (
+              <>
+                {/* Left eye */}
+                <motion.ellipse
+                  cx="17"
+                  cy="35"
+                  rx="4"
+                  ry="5"
+                  fill="#00FFFF"
+                  animate={{
+                    opacity: [0.6, 1, 0.6],
+                    cy: [35, 33, 35],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    repeatType: 'reverse',
+                  }}
+                  style={{ filter: 'drop-shadow(0 0 6px #00FFFF)' }}
+                />
+                {/* Right eye */}
+                <motion.ellipse
+                  cx="33"
+                  cy="35"
+                  rx="4"
+                  ry="5"
+                  fill="#00FFFF"
+                  animate={{
+                    opacity: [0.6, 1, 0.6],
+                    cy: [35, 33, 35],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    repeatType: 'reverse',
+                    delay: 0.3,
+                  }}
+                  style={{ filter: 'drop-shadow(0 0 6px #00FFFF)' }}
+                />
+                {/* Eye pupils */}
+                <circle cx="17" cy="35" r="1.5" fill="#FF00FF" style={{ filter: 'drop-shadow(0 0 3px #FF00FF)' }} />
+                <circle cx="33" cy="35" r="1.5" fill="#FF00FF" style={{ filter: 'drop-shadow(0 0 3px #FF00FF)' }} />
+              </>
+            )}
+
+            {/* Tentacle-like appendages */}
+            {isVisible && !isHiding && (
+              <>
+                <motion.path
+                  d="M10 75 Q5 85 12 88"
+                  fill="none"
+                  stroke="rgba(20,10,30,0.95)"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  animate={{
+                    d: ['M10 75 Q5 85 12 88', 'M10 75 Q3 87 14 90', 'M10 75 Q5 85 12 88'],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                  }}
+                />
+                <motion.path
+                  d="M40 75 Q45 85 38 88"
+                  fill="none"
+                  stroke="rgba(20,10,30,0.95)"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  animate={{
+                    d: ['M40 75 Q45 85 38 88', 'M40 75 Q47 87 36 90', 'M40 75 Q45 85 38 88'],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    delay: 1,
+                  }}
+                />
+              </>
+            )}
+          </svg>
+
+          {/* "Hide-Behind" label */}
+          <motion.div
+            animate={{ opacity: isVisible && !isHiding ? 0.6 : 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap"
+          >
+            <span className="font-typewriter text-[8px] uppercase tracking-wider text-magenta">
+              (THE HIDE-BEHIND)
+            </span>
+          </motion.div>
+
+          {/* Teleport flash effect */}
+          <AnimatePresence>
+            {isHiding && (
+              <motion.div
+                initial={{ opacity: 1, scale: 2 }}
+                animate={{ opacity: 0, scale: 3 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2"
+              >
+                <div
+                  className="h-full w-full rounded-full"
+                  style={{
+                    background: 'radial-gradient(circle, rgba(255,0,255,0.6), transparent)',
+                  }}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
-      </motion.div>
-    </div>
+      </AnimatePresence>
+    </motion.div>
   );
 }
