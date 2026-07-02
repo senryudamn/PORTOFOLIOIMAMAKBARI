@@ -18,122 +18,242 @@ export default function WeirdnessGauge() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const needleRotation = -90 + (scrollProgress * 1.8); // -90 to 90 degrees
+  // Needle rotates from -90deg (0%) to 90deg (100%)
+  const needleRotation = -90 + (scrollProgress * 1.8);
 
-  const getLabel = () => {
-    if (scrollProgress < 33) return 'NORMAL';
-    if (scrollProgress < 66) return 'ANOMALOUS';
-    return 'ANOMALY DETECTED';
+  const getDangerLevel = () => {
+    if (scrollProgress < 33) return { label: 'SAFE', color: '#22c55e' };
+    if (scrollProgress < 66) return { label: 'CAUTION', color: '#eab308' };
+    return { label: 'ANOMALY!', color: '#ef4444' };
   };
 
-  const getGlowColor = () => {
-    if (scrollProgress < 33) return 'rgba(0, 255, 0, 0.3)';
-    if (scrollProgress < 66) return 'rgba(255, 200, 0, 0.4)';
-    return 'rgba(255, 0, 100, 0.5)';
-  };
+  const danger = getDangerLevel();
+
+  // Generate tick marks for the gauge
+  const ticks = [0, 20, 40, 60, 80, 100];
 
   return (
     <motion.div
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.5, duration: 0.8 }}
+      transition={{ delay: 3.5, duration: 0.8 }}
       className="fixed right-4 top-1/2 z-50 hidden -translate-y-1/2 transform lg:block xl:right-6"
     >
       <div className="relative flex flex-col items-center">
-        {/* Journal number indicator */}
-        <div className="mb-2 text-center font-typewriter text-xs uppercase tracking-wider text-parchment-400">
-          {Math.ceil(scrollProgress / 33.33)}
-        </div>
-
-        {/* Gauge body - parchment styled */}
-        <div
-          className="relative h-48 w-16 rounded-t-full rounded-b-sm border-2 border-parchment-500 bg-parchment-200 shadow-paper-lg"
-          style={{
-            background: 'linear-gradient(180deg, #f5f0e1 0%, #e8dcb8 50%, #d4c4a0 100%)',
-          }}
-        >
-          {/* Gauge markings */}
-          <div className="absolute inset-x-0 top-0 h-full">
-            {/* Tick marks */}
-            {[0, 25, 50, 75, 100].map((tick) => (
-              <div
-                key={tick}
-                className="absolute left-1 h-px bg-parchment-500"
-                style={{
-                  top: `${10 + tick * 0.8}%`,
-                  width: tick % 50 === 0 ? '12px' : '8px',
-                }}
-              />
-            ))}
-            {[0, 25, 50, 75, 100].map((tick) => (
-              <div
-                key={`r-${tick}`}
-                className="absolute right-1 h-px bg-parchment-500"
-                style={{
-                  top: `${10 + tick * 0.8}%`,
-                  width: tick % 50 === 0 ? '12px' : '8px',
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Percentage display */}
-          <div className="absolute inset-x-0 bottom-3 text-center font-mono text-[10px] font-bold text-parchmark-600">
-            {Math.round(scrollProgress)}%
-          </div>
-        </div>
-
-        {/* Needle */}
-        <motion.div
-          className="absolute bottom-6 h-32 w-32"
-          animate={{ rotate: needleRotation }}
-          transition={{ type: 'spring', stiffness: 100, damping: 15 }}
-        >
-          <div
-            className="absolute inset-0"
-            style={{
-              transform: 'translateX(-50%)',
-            }}
-          >
-            <svg viewBox="0 0 100 120" className="h-full w-full">
-              {/* Needle center */}
-              <circle cx="50" cy="100" r="8" fill="#5c4a32" />
-              <circle cx="50" cy="100" r="5" fill="#FFD700" />
-              {/* Needle */}
-              <polygon
-                points="50,10 46,95 54,95"
-                fill={scrollProgress < 33 ? '#2d5016' : scrollProgress < 66 ? '#8B7355' : '#8B0000'}
-                style={{ filter: `drop-shadow(0 0 5px ${getGlowColor()})` }}
-              />
-            </svg>
-          </div>
-        </motion.div>
-
-        {/* Status label */}
-        <div
-          className="mt-3 rounded border border-parchment-500 bg-parchment-300 px-2 py-1 text-center"
-          style={{ transform: 'rotate(-90deg)', transformOrigin: 'center' }}
-        >
-          <span
-            className="font-typewriter text-[10px] font-bold uppercase tracking-wider"
-            style={{
-              color: scrollProgress < 33 ? '#2d5016' : scrollProgress < 66 ? '#8B7355' : '#8B0000',
-            }}
-          >
-            {getLabel()}
+        {/* Journal section indicator */}
+        <div className="mb-3 rounded-full border border-parchment-500/50 bg-parchment-900/80 px-3 py-1">
+          <span className="font-typewriter text-xs uppercase tracking-wider text-gold">
+            Journal {Math.ceil(scrollProgress / 33.33)}
           </span>
         </div>
 
-        {/* Glowing anomaly indicator */}
+        {/* Steampunk Gauge Container */}
+        <div className="relative h-44 w-24">
+          {/* Outer metallic frame */}
+          <div
+            className="absolute inset-0 rounded-t-full rounded-b-lg"
+            style={{
+              background: 'linear-gradient(145deg, #8B7355 0%, #5c4a32 50%, #3d2e1a 100%)',
+              boxShadow: `
+                inset 0 2px 4px rgba(255,255,255,0.2),
+                inset 0 -2px 4px rgba(0,0,0,0.4),
+                0 4px 12px rgba(0,0,0,0.5),
+                0 0 0 3px #3d2e1a
+              `,
+            }}
+          />
+
+          {/* Inner gauge face */}
+          <div
+            className="absolute inset-2 rounded-t-full rounded-b-md"
+            style={{
+              background: 'linear-gradient(180deg, #1a1608 0%, #0d0a04 100%)',
+              boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.8)',
+            }}
+          >
+            {/* Glass reflection semi-circle */}
+            <div
+              className="absolute inset-x-0 top-0 h-1/2 rounded-t-full opacity-20"
+              style={{
+                background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%)',
+              }}
+            />
+
+            {/* Tick marks and labels */}
+            <svg viewBox="0 0 100 70" className="absolute inset-x-2 top-2 h-full w-auto">
+              {/* Arc path for ticks */}
+              {ticks.map((tick) => {
+                const angle = -90 + (tick * 1.8);
+                const rad = (angle * Math.PI) / 180;
+                const x1 = 50 + 35 * Math.cos(rad);
+                const y1 = 65 - 35 * Math.sin(rad);
+                const x2 = 50 + (tick % 20 === 0 ? 28 : 31) * Math.cos(rad);
+                const y2 = 65 - (tick % 20 === 0 ? 28 : 31) * Math.sin(rad);
+                const labelX = 50 + 22 * Math.cos(rad);
+                const labelY = 65 - 22 * Math.sin(rad);
+
+                return (
+                  <g key={tick}>
+                    {/* Tick line */}
+                    <line
+                      x1={x1}
+                      y1={y1}
+                      x2={x2}
+                      y2={y2}
+                      stroke={tick >= 80 ? '#ef4444' : tick >= 60 ? '#eab308' : '#22c55e'}
+                      strokeWidth={tick % 20 === 0 ? 2 : 1}
+                      opacity={0.8}
+                    />
+                    {/* Label */}
+                    {tick % 20 === 0 && (
+                      <text
+                        x={labelX}
+                        y={labelY}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        fill={tick >= 80 ? '#ef4444' : tick >= 60 ? '#eab308' : '#22c55e'}
+                        fontSize="5"
+                        fontFamily="monospace"
+                        opacity={0.9}
+                      >
+                        {tick}
+                      </text>
+                    )}
+                  </g>
+                );
+              })}
+
+              {/* Colored zones */}
+              <defs>
+                <linearGradient id="zoneGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#22c55e" />
+                  <stop offset="50%" stopColor="#eab308" />
+                  <stop offset="100%" stopColor="#ef4444" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M 15 65 A 35 35 0 0 1 85 65"
+                fill="none"
+                stroke="url(#zoneGradient)"
+                strokeWidth="2"
+                opacity="0.3"
+              />
+            </svg>
+
+            {/* Needle */}
+            <motion.div
+              className="absolute bottom-6 left-1/2 origin-bottom"
+              style={{
+                width: '4px',
+                height: '50px',
+                marginLeft: '-2px',
+              }}
+              animate={{ rotate: needleRotation }}
+              transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+            >
+              <svg viewBox="0 0 8 50" className="h-full w-full">
+                {/* Needle shape */}
+                <polygon
+                  points="4,0 6,40 2,40"
+                  fill={danger.color}
+                  stroke="rgba(0,0,0,0.3)"
+                  strokeWidth="0.5"
+                />
+                {/* Needle center cap */}
+                <circle
+                  cx="4"
+                  cy="45"
+                  r="4"
+                  fill="url(#needleCap)"
+                  stroke="#3d2e1a"
+                  strokeWidth="1"
+                />
+                <defs>
+                  <radialGradient id="needleCap" cx="30%" cy="30%">
+                    <stop offset="0%" stopColor="#FFD700" />
+                    <stop offset="100%" stopColor="#C9A800" />
+                  </radialGradient>
+                </defs>
+              </svg>
+            </motion.div>
+
+            {/* Center screw/cap */}
+            <div
+              className="absolute bottom-5 left-1/2 h-5 w-5 -translate-x-1/2 rounded-full"
+              style={{
+                background: 'radial-gradient(circle at 30% 30%, #FFD700, #8B7355, #3d2e1a)',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.5)',
+              }}
+            />
+          </div>
+
+          {/* Brass screws decoration */}
+          <div
+            className="absolute -left-1 top-8 h-2 w-2 rounded-full"
+            style={{
+              background: 'radial-gradient(circle at 30% 30%, #FFD700, #8B7355)',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.3)',
+            }}
+          />
+          <div
+            className="absolute -right-1 top-8 h-2 w-2 rounded-full"
+            style={{
+              background: 'radial-gradient(circle at 30% 30%, #FFD700, #8B7355)',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.3)',
+            }}
+          />
+        </div>
+
+        {/* Digital readout */}
+        <div
+          className="mt-2 rounded border border-parchment-500/50 px-2 py-1"
+          style={{
+            background: 'linear-gradient(180deg, #1a1608 0%, #0d0a04 100%)',
+            boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+          }}
+        >
+          <span
+            className="font-mono text-sm font-bold tabular-nums"
+            style={{
+              color: danger.color,
+              textShadow: `0 0 8px ${danger.color}`,
+            }}
+          >
+            {Math.round(scrollProgress)}%
+          </span>
+        </div>
+
+        {/* Status label */}
+        <motion.div
+          key={danger.label}
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="mt-1"
+        >
+          <span
+            className="font-typewriter text-[10px] font-bold uppercase tracking-wider"
+            style={{ color: danger.color }}
+          >
+            {danger.label}
+          </span>
+        </motion.div>
+
+        {/* Warning light (blinks at high danger) */}
         {scrollProgress > 66 && (
           <motion.div
             animate={{
-              opacity: [0.5, 1, 0.5],
-              scale: [1, 1.1, 1],
+              opacity: [0.3, 1, 0.3],
+              scale: [1, 1.2, 1],
             }}
-            transition={{ duration: 1, repeat: Infinity }}
-            className="absolute -left-2 top-0 h-3 w-3 rounded-full bg-red-500 shadow-lg"
-            style={{ boxShadow: '0 0 10px #FF0000, 0 0 20px #FF0000' }}
+            transition={{
+              duration: 0.5,
+              repeat: Infinity,
+            }}
+            className="absolute -left-3 top-6 h-3 w-3 rounded-full"
+            style={{
+              background: 'radial-gradient(circle, #ef4444, #7f1d1d)',
+              boxShadow: '0 0 8px #ef4444, 0 0 16px #ef4444',
+            }}
           />
         )}
       </div>

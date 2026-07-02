@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { gallery, awards } from '../data';
+import WatchingEye from './WatchingEye';
+import CryptogramText from './CryptogramText';
+import HideBehindAnomaly from './HideBehindAnomaly';
 
 // Six-fingered hand with number 3
 function SixFingerHand3({ className = '' }: { className?: string }) {
@@ -297,6 +300,12 @@ export default function Journal3() {
           viewport={{ once: true }}
           className="relative mb-12 overflow-hidden rounded border-2 border-dashed border-[#FF00FF]/30 bg-parchment-200/70 p-6"
         >
+          {/* Watching Eye Easter Egg in background */}
+          <WatchingEye />
+
+          {/* Hide-Behind Anomaly */}
+          <HideBehindAnomaly side="left" topPosition="40%" />
+
           {/* Torn edge */}
           <div
             className="absolute -right-2 -top-2 h-16 w-12 rotate-6 border-b border-l border-[#FF00FF]/20"
@@ -306,13 +315,14 @@ export default function Journal3() {
           />
 
           <p className="font-typewriter text-lg text-[#2d1b4e] lg:text-xl">
-            "TRUST NO ONE! The events documented herein are the most chaotic and secretive.
+            "<CryptogramText text="TRUST NO ONE!" className="text-[#FF00FF]" />
+            The events documented herein are the most chaotic and secretive.
             Proceed with extreme caution. Reality itself bends in this section..."
           </p>
           <div className="mt-4 flex items-center gap-2">
             <div className="h-2 w-2 animate-pulse rounded-full bg-[#FF00FF]" />
             <p className="font-mono text-xs uppercase tracking-widest text-[#FF00FF]/60">
-              Anomaly Level: CRITICAL
+              <CryptogramText text="ANOMALY LEVEL: CRITICAL" delay={100} />
             </p>
           </div>
         </motion.div>

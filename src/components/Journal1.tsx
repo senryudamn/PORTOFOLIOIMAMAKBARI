@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { profile } from '../data';
+import FallingS from './FallingS';
+import HideBehindAnomaly from './HideBehindAnomaly';
 
 // Six-fingered hand SVG component with gold styling
 function SixFingerHand({ className = '' }: { className?: string }) {
@@ -135,8 +137,17 @@ export default function Journal1() {
                 Subject Identified
               </p>
               <h1 className="mt-2 font-cryptic text-4xl font-bold text-parchment-600 md:text-5xl lg:text-6xl">
-                {profile.name}
+                {profile.name.split(' ')[0]}{' '}
+                {profile.name.split(' ').slice(1).join(' ')}
               </h1>
+            </div>
+
+            {/* The "Falling S" Easter Egg in tagline */}
+            <div className="mb-6">
+              <p className="font-typewriter text-base md:text-lg" style={{ color: '#5c4a32' }}>
+                <FallingS className="text-lg md:text-xl" />
+                tudent at {profile.university}
+              </p>
             </div>
 
             {/* Bio in journal style */}
@@ -200,8 +211,11 @@ export default function Journal1() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
           id="about"
-          className="mt-20 pt-8"
+          className="relative mt-20 pt-8"
         >
+          {/* Hide-Behind Anomaly Easter Egg */}
+          <HideBehindAnomaly side="right" topPosition="15%" />
+
           {/* Journal entry header */}
           <div className="mb-6 flex items-center gap-4">
             <div className="h-px flex-1 bg-gradient-to-r from-crimson/50 to-transparent" />

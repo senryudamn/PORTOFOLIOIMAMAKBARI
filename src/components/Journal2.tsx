@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { projects } from '../data';
+import InvisibleMarginNotes, { secretMessages } from './InvisibleMarginNotes';
 
 // Six-fingered hand with number 2
 function SixFingerHand2({ className = '' }: { className?: string }) {
@@ -43,167 +44,184 @@ interface ProjectCardProps {
 function ProjectCard({ project, index }: ProjectCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
+  const notes = [
+    {
+      text: secretMessages.indonesian[index % secretMessages.indonesian.length],
+      position: index % 2 === 0 ? 'left' as const : 'right' as const,
+      top: '20%',
+      color: index % 2 === 0 ? 'cyan' as const : 'magenta' as const,
+    },
+    {
+      text: secretMessages.formulas[index % secretMessages.formulas.length],
+      position: index % 2 === 0 ? 'right' as const : 'left' as const,
+      top: '60%',
+      color: index % 2 === 0 ? 'magenta' as const : 'cyan' as const,
+    },
+  ];
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.6, delay: index * 0.15 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="group relative"
-    >
-      {/* Sketchy border wrapper */}
-      <div className="relative rounded-sm border-2 border-dashed border-blue-900/40 p-4 transition-all duration-500 group-hover:border-solid group-hover:border-cyan-400/60">
-        {/* Hand-drawn corner decorations */}
-        <div className="absolute -left-1 -top-1 h-4 w-4 border-l-2 border-t-2 border-blue-900/30" />
-        <div className="absolute -right-1 -top-1 h-4 w-4 border-r-2 border-t-2 border-blue-900/30" />
-        <div className="absolute -bottom-1 -left-1 h-4 w-4 border-b-2 border-l-2 border-blue-900/30" />
-        <div className="absolute -bottom-1 -right-1 h-4 w-4 border-b-2 border-r-2 border-blue-900/30" />
+    <InvisibleMarginNotes triggerState={isHovered} notes={notes}>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-50px' }}
+        transition={{ duration: 0.6, delay: index * 0.15 }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="group relative"
+      >
+        {/* Sketchy border wrapper */}
+        <div className="relative rounded-sm border-2 border-dashed border-blue-900/40 p-4 transition-all duration-500 group-hover:border-solid group-hover:border-cyan-400/60">
+          {/* Hand-drawn corner decorations */}
+          <div className="absolute -left-1 -top-1 h-4 w-4 border-l-2 border-t-2 border-blue-900/30" />
+          <div className="absolute -right-1 -top-1 h-4 w-4 border-r-2 border-t-2 border-blue-900/30" />
+          <div className="absolute -bottom-1 -left-1 h-4 w-4 border-b-2 border-l-2 border-blue-900/30" />
+          <div className="absolute -bottom-1 -right-1 h-4 w-4 border-b-2 border-r-2 border-blue-900/30" />
 
-        {/* Blueprint styled card */}
-        <div
-          className="blacklight-card relative overflow-hidden rounded bg-parchment-200 shadow-paper transition-all duration-500"
-          style={{
-            background: isHovered
-              ? 'linear-gradient(135deg, #0a1628, #1a2a4a)'
-              : 'linear-gradient(135deg, #f0e6cc, #e8dcb8)',
-          }}
-        >
-          {/* Image container */}
-          <div className="relative aspect-video overflow-hidden">
-            {/* Grid lines overlay (blueprint style) */}
-            <div
-              className="absolute inset-0 z-10 opacity-10 transition-opacity duration-500 group-hover:opacity-40"
-              style={{
-                backgroundImage: `
-                  linear-gradient(to right, ${isHovered ? '#00FFFF' : '#1a3a5c'} 1px, transparent 1px),
-                  linear-gradient(to bottom, ${isHovered ? '#00FFFF' : '#1a3a5c'} 1px, transparent 1px)
-                `,
-                backgroundSize: '20px 20px',
-              }}
-            />
+          {/* Blueprint styled card */}
+          <div
+            className="blacklight-card relative overflow-hidden rounded bg-parchment-200 shadow-paper transition-all duration-500"
+            style={{
+              background: isHovered
+                ? 'linear-gradient(135deg, #0a1628, #1a2a4a)'
+                : 'linear-gradient(135deg, #f0e6cc, #e8dcb8)',
+            }}
+          >
+            {/* Image container */}
+            <div className="relative aspect-video overflow-hidden">
+              {/* Grid lines overlay (blueprint style) */}
+              <div
+                className="absolute inset-0 z-10 opacity-10 transition-opacity duration-500 group-hover:opacity-40"
+                style={{
+                  backgroundImage: `
+                    linear-gradient(to right, ${isHovered ? '#00FFFF' : '#1a3a5c'} 1px, transparent 1px),
+                    linear-gradient(to bottom, ${isHovered ? '#00FFFF' : '#1a3a5c'} 1px, transparent 1px)
+                  `,
+                  backgroundSize: '20px 20px',
+                }}
+              />
 
-            {/* Project image with blacklight effect */}
-            <img
-              src={project.image}
-              alt={project.title}
-              className="h-full w-full object-cover transition-all duration-500"
-              style={{
-                filter: isHovered
-                  ? 'sepia(0) saturate(1.3) contrast(1.1)'
-                  : 'sepia(0.6) contrast(1.05) brightness(0.9)',
-              }}
-            />
+              {/* Project image with blacklight effect */}
+              <img
+                src={project.image}
+                alt={project.title}
+                className="h-full w-full object-cover transition-all duration-500"
+                style={{
+                  filter: isHovered
+                    ? 'sepia(0) saturate(1.3) contrast(1.1)'
+                    : 'sepia(0.6) contrast(1.05) brightness(0.9)',
+                }}
+              />
 
-            {/* UV reveal overlay - hidden tech stack */}
-            <div className="absolute inset-0 z-20 flex items-end justify-center bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-              <div className="mb-4 text-center">
-                <p className="uv-text font-typewriter text-xs uppercase tracking-wider">
-                  Tech Stack Detected
-                </p>
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={isHovered ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="mt-2 flex flex-wrap justify-center gap-1"
-                >
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded border border-cyan-400/50 bg-cyan-900/30 px-2 py-0.5 font-mono text-xs text-cyan-400"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </motion.div>
+              {/* UV reveal overlay - hidden tech stack */}
+              <div className="absolute inset-0 z-20 flex items-end justify-center bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <div className="mb-4 text-center">
+                  <p className="uv-text font-typewriter text-xs uppercase tracking-wider">
+                    Tech Stack Detected
+                  </p>
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={isHovered ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="mt-2 flex flex-wrap justify-center gap-1"
+                  >
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded border border-cyan-400/50 bg-cyan-900/30 px-2 py-0.5 font-mono text-xs text-cyan-400"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </motion.div>
+                </div>
+              </div>
+
+              {/* Blueprint stamp */}
+              <div
+                className="absolute right-2 top-2 rounded-sm border border-current p-1 font-typewriter text-[10px] uppercase opacity-50 transition-colors duration-500"
+                style={{
+                  borderColor: isHovered ? '#FF00FF' : '#1a3a5c',
+                  color: isHovered ? '#FF00FF' : '#1a3a5c',
+                  transform: 'rotate(3deg)',
+                }}
+              >
+                Anomaly #{index + 1}
               </div>
             </div>
 
-            {/* Blueprint stamp */}
-            <div
-              className="absolute right-2 top-2 rounded-sm border border-current p-1 font-typewriter text-[10px] uppercase opacity-50 transition-colors duration-500"
-              style={{
-                borderColor: isHovered ? '#FF00FF' : '#1a3a5c',
-                color: isHovered ? '#FF00FF' : '#1a3a5c',
-                transform: 'rotate(3deg)',
-              }}
-            >
-              Anomaly #{index + 1}
-            </div>
-          </div>
+            {/* Content area */}
+            <div className="p-4">
+              {/* Title and subtitle */}
+              <h3
+                className="font-cryptic text-xl font-bold transition-colors duration-500"
+                style={{ color: isHovered ? '#00FFFF' : '#1a3a5c' }}
+              >
+                {project.title}
+              </h3>
+              <p
+                className="mt-1 font-typewriter text-sm transition-colors duration-500"
+                style={{ color: isHovered ? '#FF00FF' : '#1a3a5c' }}
+              >
+                "{project.subtitle}"
+              </p>
 
-          {/* Content area */}
-          <div className="p-4">
-            {/* Title and subtitle */}
-            <h3
-              className="font-cryptic text-xl font-bold transition-colors duration-500"
-              style={{ color: isHovered ? '#00FFFF' : '#1a3a5c' }}
-            >
-              {project.title}
-            </h3>
-            <p
-              className="mt-1 font-typewriter text-sm transition-colors duration-500"
-              style={{ color: isHovered ? '#FF00FF' : '#1a3a5c' }}
-            >
-              "{project.subtitle}"
-            </p>
+              {/* Description */}
+              <p
+                className="mt-3 font-serif text-sm leading-relaxed transition-colors duration-500"
+                style={{ color: isHovered ? '#e0f0ff' : '#4a4a4a' }}
+              >
+                {project.description}
+              </p>
 
-            {/* Description */}
-            <p
-              className="mt-3 font-serif text-sm leading-relaxed transition-colors duration-500"
-              style={{ color: isHovered ? '#e0f0ff' : '#4a4a4a' }}
-            >
-              {project.description}
-            </p>
-
-            {/* Highlights as "anomaly readings" */}
-            <div className="mt-4 space-y-2">
-              {project.highlights.map((highlight, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.1 * i }}
-                  className="flex items-start gap-2"
-                >
-                  <div
-                    className="mt-1 h-2 w-2 rounded-full border transition-colors duration-500"
-                    style={{
-                      borderColor: isHovered ? '#00FFFF' : '#1a3a5c',
-                      background: isHovered ? '#00FFFF' : 'transparent',
-                    }}
-                  />
-                  <p
-                    className="flex-1 font-typewriter text-xs transition-colors duration-500"
-                    style={{ color: isHovered ? '#a0e8ff' : '#5c4a32' }}
+              {/* Highlights as "anomaly readings" */}
+              <div className="mt-4 space-y-2">
+                {project.highlights.map((highlight, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 * i }}
+                    className="flex items-start gap-2"
                   >
-                    {highlight}
+                    <div
+                      className="mt-1 h-2 w-2 rounded-full border transition-colors duration-500"
+                      style={{
+                        borderColor: isHovered ? '#00FFFF' : '#1a3a5c',
+                        background: isHovered ? '#00FFFF' : 'transparent',
+                      }}
+                    />
+                    <p
+                      className="flex-1 font-typewriter text-xs transition-colors duration-500"
+                      style={{ color: isHovered ? '#a0e8ff' : '#5c4a32' }}
+                    >
+                      {highlight}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Technical specs panel (shown on hover) */}
+              {isHovered && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 border-t border-cyan-400/30 pt-4"
+                >
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-cyan-400">
+                    System Analysis Complete
+                  </p>
+                  <p className="mt-2 font-serif text-xs text-gray-300">
+                    {project.longDescription[0]}
                   </p>
                 </motion.div>
-              ))}
+              )}
             </div>
-
-            {/* Technical specs panel (shown on hover) */}
-            {isHovered && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-4 border-t border-cyan-400/30 pt-4"
-              >
-                <p className="font-mono text-[10px] uppercase tracking-widest text-cyan-400">
-                  System Analysis Complete
-                </p>
-                <p className="mt-2 font-serif text-xs text-gray-300">
-                  {project.longDescription[0]}
-                </p>
-              </motion.div>
-            )}
           </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </InvisibleMarginNotes>
   );
 }
 
