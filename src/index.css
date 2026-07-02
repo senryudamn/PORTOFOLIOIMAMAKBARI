@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Cinzel+Decorative:wght@400;700&family=Courier+Prime:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,8 +14,8 @@
 
 html,
 body {
-  background-color: #050505;
-  color: #d4d4d8;
+  background-color: #1a1510;
+  color: #2d2418;
 }
 
 body {
@@ -24,88 +26,263 @@ body {
 }
 
 ::selection {
-  background: rgba(255, 255, 255, 0.85);
-  color: #050505;
+  background: rgba(0, 255, 255, 0.3);
+  color: #00FFFF;
 }
 
-/* Custom scrollbar — monochrome */
+/* Custom scrollbar — parchment style */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0b;
+  background: #c9bc9a;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #3a3a40, #1f1f22);
-  border-radius: 9999px;
-  border: 2px solid #0a0a0b;
+  background: linear-gradient(180deg, #8B7355, #5c4a32);
+  border-radius: 6px;
+  border: 2px solid #c9bc9a;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #52525b, #2a2a2e);
+  background: linear-gradient(180deg, #6b5233, #3d2e1a);
 }
 
-@layer components {
-  .gradient-text {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
-  }
-
-  .glass {
-    @apply bg-ink-850/70 backdrop-blur-xl border border-white/[0.06];
-  }
-
-  .glass-strong {
-    @apply bg-ink-800/80 backdrop-blur-xl border border-white/[0.08];
-  }
-
-  .section-eyebrow {
-    @apply inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.3em] text-ash-300;
-  }
-
-  .card-hover {
-    @apply transition-all duration-500 ease-out hover:-translate-y-2;
-  }
-
-  .hairline {
-    @apply border border-white/[0.07];
-  }
+/* Paper texture overlay */
+.paper-texture {
+  position: relative;
 }
 
-/* Grid background — fine, monochrome */
-.bg-grid {
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 64px 64px;
+.paper-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.08;
+  pointer-events: none;
+  mix-blend-mode: multiply;
 }
 
-.bg-grid-fade {
-  -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 0%, black 35%, transparent 80%);
-  mask-image: radial-gradient(ellipse 70% 55% at 50% 0%, black 35%, transparent 80%);
+/* Aged paper effect */
+.journal-page {
+  background: linear-gradient(
+    135deg,
+    #e8dcb8 0%,
+    #f0e6cc 15%,
+    #e8dcb8 30%,
+    #ddd0a8 50%,
+    #e8dcb8 70%,
+    #f0e6cc 85%,
+    #e8dcb8 100%
+  );
+  box-shadow:
+    inset 0 0 60px rgba(139, 115, 85, 0.2),
+    inset 0 0 20px rgba(139, 115, 85, 0.1),
+    0 4px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
 }
 
-/* Topo lines — subtle horizontal striations echoing contour maps */
-.bg-topo {
-  background-image: repeating-linear-gradient(
-    180deg,
-    transparent 0,
-    transparent 38px,
-    rgba(255, 255, 255, 0.018) 38px,
-    rgba(255, 255, 255, 0.018) 39px
+.journal-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+/* Torn page edge effect */
+.torn-edge {
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    100% calc(100% - 20px),
+    98% 100%,
+    95% calc(100% - 10px),
+    92% 100%,
+    88% calc(100% - 15px),
+    85% 100%,
+    80% calc(100% - 8px),
+    75% 100%,
+    70% calc(100% - 12px),
+    65% 100%,
+    60% calc(100% - 6px),
+    55% 100%,
+    50% calc(100% - 18px),
+    45% 100%,
+    40% calc(100% - 10px),
+    35% 100%,
+    30% calc(100% - 14px),
+    25% 100%,
+    20% calc(100% - 8px),
+    15% 100%,
+    100%,
+    10% calc(100% - 16px),
+    5% 100%,
+    2% calc(100% - 10px),
+    0% 100%
   );
 }
 
-/* Masonry */
-.masonry {
-  column-gap: 1.25rem;
-}
-.masonry > * {
-  break-inside: avoid;
-  margin-bottom: 1.25rem;
+/* Blacklight effect */
+.blacklight-card {
+  filter: sepia(0.8) contrast(1.1) brightness(0.9);
+  transition: all 0.4s ease;
 }
 
-/* Grayscale image treatment for monochrome cohesion */
-.img-mono {
-  filter: grayscale(1) contrast(1.08) brightness(0.92);
+.blacklight-card:hover {
+  filter: sepia(0) contrast(1.2) brightness(1.1);
+  box-shadow:
+    0 0 30px rgba(0, 255, 255, 0.4),
+    0 0 60px rgba(255, 0, 255, 0.2),
+    inset 0 0 30px rgba(0, 255, 255, 0.1);
+}
+
+.blacklight-card:hover .hidden-text {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* UV reveal text */
+.uv-text {
+  opacity: 0;
+  transition: all 0.5s ease;
+  color: #00FFFF;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
+
+/* Sketchy border */
+.sketchy-border {
+  border: 3px solid #5c4a32;
+  border-radius: 2px 8px 3px 12px;
+  position: relative;
+}
+
+.sketchy-border::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 2px solid rgba(92, 74, 50, 0.3);
+  border-radius: 8px 2px 12px 3px;
+  pointer-events: none;
+}
+
+/* Vintage photo tape effect */
+.vintage-photo {
+  transform: rotate(-2deg);
+  box-shadow:
+    3px 3px 0 #fff,
+    4px 4px 0 rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 4px solid #fff;
+}
+
+.vintage-photo::before,
+.vintage-photo::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 200, 0.7);
+  border: 1px solid rgba(200, 180, 100, 0.3);
+}
+
+.vintage-photo::before {
+  top: -15px;
+  left: 20%;
+  width: 60px;
+  height: 20px;
+  transform: rotate(3deg);
+}
+
+.vintage-photo::after {
+  bottom: -15px;
+  right: 15%;
+  width: 60px;
+  height: 20px;
+  transform: rotate(-2deg);
+}
+
+/* Trust No One watermark */
+.trust-no-one {
+  position: relative;
+}
+
+.trust-no-one::after {
+  content: 'TRUST NO ONE';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-family: 'Special Elite', monospace;
+  font-size: 4rem;
+  font-weight: bold;
+  color: rgba(92, 74, 50, 0.05);
+  letter-spacing: 0.5em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Glowing rune text */
+.rune-text {
+  color: #00FFFF;
+  text-shadow:
+    0 0 5px rgba(0, 255, 255, 0.5),
+    0 0 10px rgba(0, 255, 255, 0.3),
+    0 0 20px rgba(0, 255, 255, 0.2);
+  font-family: 'Cinzel Decorative', serif;
+}
+
+/* Cipher wheel animation */
+.cipher-wheel {
+  animation: spin-slow 20s linear infinite;
+}
+
+/* Bill's mindscpae modal */
+.mindscape-modal {
+  background: radial-gradient(ellipse at center, #1a0a2e 0%, #000 70%);
+  box-shadow:
+    0 0 50px rgba(255, 215, 0, 0.3),
+    0 0 100px rgba(255, 0, 255, 0.2),
+    inset 0 0 100px rgba(0, 255, 255, 0.1);
+}
+
+/* Glitch effect for Bill reveal */
+.glitch {
+  animation: bill-glitch 0.3s ease-in-out;
+}
+
+/* Journal section divider */
+.journal-divider {
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #5c4a32, #8B0000, #5c4a32, transparent);
+  margin: 3rem auto;
+  max-width: 60%;
+}
+
+/* Typewriter effect */
+@keyframes typewriter-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.typewriter-cursor::after {
+  content: '|';
+  animation: typewriter-cursor 1s step-end infinite;
+}
+
+/* Anomaly float keyframes for inline use */
+@keyframes float-zodiac {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.05; }
+  25% { transform: translate(150px, -80px) rotate(90deg) scale(1.1); opacity: 0.08; }
+  50% { transform: translate(-50px, -150px) rotate(180deg) scale(0.9); opacity: 0.06; }
+  75% { transform: translate(80px, -50px) rotate(270deg) scale(1.05); opacity: 0.07; }
+  100% { transform: translate(0, 0) rotate(360deg) scale(1); opacity: 0.05; }
+}
+
+@keyframes pulse-anomaly {
+  0%, 100% { opacity: 0.03; transform: scale(0.9); }
+  50% { opacity: 0.12; transform: scale(1.15); }
+}
+
+/* Finger hand SVG styling */
+.six-finger-hand {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
